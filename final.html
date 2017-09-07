@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<title> Seahorse Data </title>
+<style type = "text/css">
+.axis path,
+.axis line{
+  fill: none;
+  stroke: black;
+  shape-rendering: crispEdges;
+}
+svg{
+  display: block;
+  margin: 0 auto;
+}
+h2, body {
+font-family: 'Lato', sans-serif;
+background-color: #20B2AA;
+background-position: center;
+}
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+}
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+/* Style northward tooltips differently */
+.d3-tip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
+}
+</style>
+<head>
+<h2><center>Depth of Sea (Ft) vs. Number of Seahorses</center></h2>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.6.7/d3-tip.js">	 </script>
+<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+</head>
+<body> <!--body will have our JavaScript-->
+<script>
+//JavaScript Code goes in Here
+//Include Data that we will be plotting
+var dataset = [
+                  [100,   5],
+                  [150,   10 ],
+                  [200,   50 ],
+                  [250,   55 ],
+                  [300,   65 ],
+                  [350,  77 ],
+                  [400,   60 ],
+                  [450,    20 ],
+                  [500,    15 ],
+                  [550,   10 ]
+              ];
+//now we will be using svg to draw
+var canvas_width = 1000;
+var canvas_height = 690;
+var padding = 70;
+
+//scaling
+var xScale = d3.scale.linear().domain([0, 555]).range([padding, canvas_width - padding * 2]);
+var yScale = d3.scale.linear().domain([0, 82]).range([canvas_height-padding, padding]);
+
+//define x-axis
+var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(10).outerTickSize(0);
+//define y-axis
+var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(20).outerTickSize(0);
+
+//create SVG element
+var svg = d3.select("body").append("svg").attr("width", canvas_width).attr("height", canvas_height);
+var tip = d3.tip()
+        .attr("class", "d3-tip")
+        .offset([-10, 0])
+        .html(function(d) {
+            return "Ocean Depth" + ": " + d[0] + "<br>" + "Number of Seahorses" + ": " + d[1];
+        });
+        svg.call(tip);
+//create our scatter points
+svg.selectAll(".dot").data(dataset).enter().append("circle").attr("cx", function(d){
+  return xScale(d[0]);
+}).attr("cy", function(d){
+  return yScale(d[1]);
+}).attr("r", 5).on("mouseover", tip.show)
+.on("mouseout", tip.hide);;
+
+//Add X-Axis
+svg.append("g").attr("class", "x axis").attr("transform", "translate(0," + (canvas_height - padding) +")")
+.call(xAxis);
+
+//Add Y-Axis
+svg.append("g").attr("class", "x axis").attr("transform", "translate(" +padding +",0)")
+.call(yAxis);//attr("text-anchor");
+
+//Add Labels
+svg.append("text")
+    .attr("text-anchor", "middle")
+    .attr("transform", "translate("+ (padding/2) +","+(canvas_height/2)+")rotate(-90)")
+    .text("Depth Of Ocean (Ft)");
+
+svg.append("text")
+    .attr("text-anchor", "middle")
+    .attr("transform", "translate("+ (canvas_width/2) +","+(canvas_height-(padding/3))+")")
+    .text("Number of Seahorses");
+
+</script>
+</body>
+</html>
